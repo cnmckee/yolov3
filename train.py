@@ -63,8 +63,8 @@ def train(cfg,
     # Initialize
     init_seeds()
     weights = 'weights' + os.sep
-    last = weights + 'last.pt'
-    best = weights + 'best.pt'
+    last = weights + 'last_model.pt'
+    best = weights + 'best_model.pt'
     device = torch_utils.select_device(apex=mixed_precision)
     multi_scale = opt.multi_scale
 
@@ -83,6 +83,7 @@ def train(cfg,
     model = Darknet(cfg).to(device)
 
     # Optimizer
+    #optimizer = optim.Adam(model.parameters(), lr=hyp['lr0'], weight_decay=hyp['weight_decay'])
     optimizer = optim.SGD(model.parameters(), lr=hyp['lr0'], momentum=hyp['momentum'], weight_decay=hyp['weight_decay'],
                           nesterov=True)
     # optimizer = AdaBound(model.parameters(), lr=hyp['lr0'], final_lr=0.1)
@@ -132,7 +133,7 @@ def train(cfg,
     # lf = lambda x: 10 ** (hyp['lrf'] * x / epochs)  # exp ramp
     # lf = lambda x: 1 - 10 ** (hyp['lrf'] * (1 - x / epochs))  # inverse exp ramp
     # scheduler = lr_scheduler.LambdaLR(optimizer, lr_lambda=lf)
-    scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[round(opt.epochs * x) for x in [0.8, 0.9]], gamma=0.1)
+    scheduler = lr_scheduler.MultiStepLR(optimizer, milestones=[round(opt.epochs * x) for x in [0.6, 0.8]], gamma=0.1)
     scheduler.last_epoch = start_epoch - 1
 
     # # Plot lr schedule
